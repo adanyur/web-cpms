@@ -1,0 +1,1 @@
+<?php return['gdb'=>'pgsql','database'=>'bd_isis2','tabla'=>'areas','campos'=>['campo0'=>'ar_codare','campo1'=>'ar_nombre',],];?>

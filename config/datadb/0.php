@@ -1,0 +1,1 @@
+<?php return['gdb'=>'pgsql','database'=>'bd_csi','tabla'=>'laboratorios','campos'=>['campo0'=>'razon_social','campo1'=>'ruc',],];?>
