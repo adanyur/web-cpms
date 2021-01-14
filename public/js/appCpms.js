@@ -1,7 +1,7 @@
 $(document).ready(function () {
     /**FUNCIONES QUE SE EJECUTA AL INICIAR**/
     // basedatos();
-    ListadoCmpsGrupo();
+    // ListadoCmpsGrupo();
     /**************************************/
     $("#databases").hide();
     $("#DB2").hide();
@@ -83,16 +83,30 @@ $(document).ready(function () {
     function basedatos(data) {
         let result = JSON.parse(data);
         let template = "";
-        template += '<option value="0">SELECCIONAR BASE DE DATOS</option>';
+        template += '<option value="0">SELECCIONAR SISTEMA</option>';
         result.map((result) => {
-            template += `<option value="${result.bd}|${result.id}">${result.bd}</option>`;
+            template += `<option value="${result.bd}|${result.id}">${result.descripcion}</option>`;
             $("#DB2").html(template);
             $("#basedatos").html(template);
         });
     }
 
     /////////TABLAS POR BASE DE DATOS
-    $("#DB2").change(function (e) {
+
+    const table = (json) => {
+        let table = JSON.parse(json);
+        let template = "";
+        template += '<option value="0">SELECCIONAR TABLA</option>';
+        table.forEach((table) => {
+            template += `<option value="${table.table_name}">${table.table_name}</option>`;
+        });
+        $("#json").hide();
+        $("#jsonf").show();
+        $("#tables").show();
+        $("#tables").html(template);
+    };
+
+    $("#DB2").change((e) => {
         let tables = $("#DB2").val();
         let a = "db";
         $("#tables").hide();
@@ -102,7 +116,7 @@ $(document).ready(function () {
         $.ajax({
             url: "GestoresBD/table/" + tables + "/" + a,
             type: "GET",
-            success: function (result) {
+            success: (result) => {
                 if (result.estado == "0") {
                     $("#modal-update").modal("show");
                     $("#mensaje").text(result.mensaje);
@@ -121,36 +135,23 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    $(document).on("click", "#edit", function (e) {
+    $(document).on("click", "#edit", (e) => {
         let tables = $("#DB2").val();
         let a = "edit";
         let url = "GestoresBD/table/" + tables + "/" + a;
-        $.get(url, function (result) {
+        $.get(url, (result) => {
             $("#modal-update").modal("hide");
             table(result);
         });
     });
 
-    function table(json) {
-        let table = JSON.parse(json);
-        let template = "";
-        template += '<option value="0">SELECCIONAR TABLA</option>';
-        table.forEach((table) => {
-            template += `<option value="${table.table_name}">${table.table_name}</option>`;
-        });
-        $("#json").hide();
-        $("#jsonf").show();
-        $("#tables").show();
-        $("#tables").html(template);
-    }
-
-    $("#tables").change(function (e) {
+    $("#tables").change((e) => {
         let tabla = $("#tables").val();
         let bd = $("#DB2").val();
         $.ajax({
             url: "GestoresBD/campo/" + tabla + "/" + bd,
             type: "GET",
-            success: function (result) {
+            success: (result) => {
                 let campo = JSON.parse(result);
                 let template = "";
                 campo.forEach((campo) => {
@@ -165,7 +166,7 @@ $(document).ready(function () {
 
     /********************SEGUNDO BOTON****************************/
 
-    $(document).on("click", ".Guardar", function (e) {
+    $(document).on("click", ".Guardar", (e) => {
         let gdb = $("#Gestor").val();
         let bd = $("#DB2").val();
         let tabla = $("#tables").val();
@@ -181,7 +182,7 @@ $(document).ready(function () {
                 "/" +
                 campo,
             type: "GET",
-            success: function (result) {
+            success: (result) => {
                 let count = result.aceptar;
                 $("#cerrar").hide();
                 $("#edit").hide();
@@ -204,7 +205,7 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
-    $(document).on("click", "#aceptar2", function (e) {
+    $(document).on("click", "#aceptar2", (e) => {
         $("#cerrar").hide();
         $("#edit").hide();
         $("#aceptar").hide();
@@ -231,7 +232,13 @@ $(document).ready(function () {
         });
     }
 
-    $(document).on("click", "#seleccionar", function (e) {
+    const alter = () => {
+        let bd = $("#DB2").val();
+        url = "GestoresBD/alter/" + bd;
+        $.get(url, (result) => {});
+    };
+
+    $(document).on("click", "#seleccionar", (e) => {
         $("#databases").hide();
         $("#tables").hide();
         $("#campos").hide();
@@ -242,39 +249,28 @@ $(document).ready(function () {
         alter();
     });
 
-    function alter() {
-        let bd = $("#DB2").val();
-        url = "GestoresBD/alter/" + bd;
-        $.get(url, function (result) {});
-    }
-
     /****************************************CPMS************************************************/
+
     const Listado = () => {
-        jQuery.getJSON("cpms/bd", (data) => {
+        $.getJSON("cpms/bd", (data) => {
             basedatos(data);
         });
     };
     Listado();
 
-    $("#basedatos").change(function (e) {
+    $("#basedatos").change((e) => {
         let grupo = $("#basedatos").val();
-        console.log(grupo);
-        $.ajax({
-            url: "cpms/" + grupo,
-            type: "GET",
-            success: function (result) {
-                let nomenclador = JSON.parse(result);
-                let template = "";
-                nomenclador.forEach((nomenclador) => {
-                    let cpms = nomenclador.cpms;
-                    let color =
-                        cpms === null
-                            ? "background-color:#FFFFFF;"
-                            : "background-color:#ffe6e6;";
-                    template += `<option style=${color} id="codigo" value="${nomenclador.codigo}">${nomenclador.descripcion}</option>`;
-                });
-                $("#codigoNomenclador").html(template);
-            },
+        let template = "";
+        $.getJSON("cpms/" + grupo, (result) => {
+            result.map((result) => {
+                let cpms = result.cpms;
+                let color =
+                    cpms === null
+                        ? "background-color:#FFFFFF;"
+                        : "background-color:#ffe6e6;";
+                template += `<option style=${color} id="codigo" value="${result.codigo}">${result.descripcion}</option>`;
+            });
+            $("#codigoNomenclador").html(template);
         });
         e.preventDefault();
     });
@@ -282,75 +278,60 @@ $(document).ready(function () {
     $(document).on("dblclick", "#codigo", (e) => {
         let dato = $("#codigo").val();
         alert(dato);
-        //alert(element);
         e.preventDefault();
     });
 
-    function ListadoCmpsGrupo() {
+    const ListadoCmpsGrupo = () => {
         $("#seccion").hide();
         $("#subseccion").hide();
-        $.ajax({
-            url: "cpms/grupo",
-            type: "GET",
-            success: function (result) {
-                let cmps = JSON.parse(result);
-                let template = "";
-                template += '<option value="a">SELECCIONAR GRUPO</option>';
-                cmps.forEach((cmps) => {
-                    template += `<option value="${cmps.codigo_grupo}">${cmps.nombre_grupo}</option>`;
-                });
-                $("#grupo").html(template);
-            },
+        let template = "";
+        template += '<option value="a">SELECCIONAR GRUPO</option>';
+        $.getJSON("cpms/grupo", (result) => {
+            result.map((result) => {
+                template += `<option value="${result.codigo_grupo}">${result.nombre_grupo}</option>`;
+            });
+            $("#grupo").html(template);
         });
-    }
+    };
+    ListadoCmpsGrupo();
 
     //SECCION
-    $("#grupo").change(function (e) {
+    $("#grupo").change((e) => {
         let grupo = $("#grupo").val();
-        $.ajax({
-            url: "cpms/seccion/" + grupo,
-            type: "GET",
-            success: function (result) {
-                let cmps = JSON.parse(result);
-                let template = "";
-                template += '<option value="0">SELECCIONAR SECCION</option>';
-                cmps.forEach((cmps) => {
-                    template += `<option value="${cmps.codigo_seccion}">${cmps.nombre_seccion}</option>`;
-                });
-                $("#seccion").show();
-                $("#seccion").html(template);
-            },
+        $.getJSON("cpms/seccion/" + grupo, (data) => {
+            let template = "";
+            template += '<option value="0">SELECCIONAR SECCION</option>';
+            data.map((data) => {
+                template += `<option value="${data.codigo_seccion}">${data.nombre_seccion}</option>`;
+            });
+            $("#seccion").show();
+            $("#seccion").html(template);
         });
         e.preventDefault();
     });
 
     //SUBSECCION
-    $("#seccion").change(function (e) {
+    $("#seccion").change((e) => {
         let seccion = $("#seccion").val();
-        $.ajax({
-            url: "cpms/subseccion/" + seccion,
-            type: "GET",
-            success: function (result) {
-                let cmps = JSON.parse(result);
-                let template = "";
-                template += '<option value="0">SELECCIONAR SUBSECCION</option>';
-                cmps.forEach((cmps) => {
-                    template += `<option value="${cmps.codigo_subseccion}">${cmps.nombre_subseccion}</option>`;
-                });
-                $("#subseccion").show();
-                $("#subseccion").html(template);
-            },
+        $.getJSON("cpms/subseccion/" + seccion, (data) => {
+            let template = "";
+            template += '<option value="0">SELECCIONAR SUBSECCION</option>';
+            data.map((data) => {
+                template += `<option value="${data.codigo_subseccion}">${data.nombre_subseccion}</option>`;
+            });
+            $("#subseccion").show();
+            $("#subseccion").html(template);
         });
         e.preventDefault();
     });
 
     /**LISTADO DE PROCEDIMIENTO DE ACUERDO A SUBSECCION**/
-    $("#subseccion").change(function (e) {
+    $("#subseccion").change((e) => {
         let subseccion = $("#subseccion").val();
         $.ajax({
             url: "cpms/procedimiento/" + subseccion,
             type: "GET",
-            success: function (result) {
+            success: (result) => {
                 let template = "";
                 let cpms = JSON.parse(result);
                 template += `
@@ -396,13 +377,10 @@ $(document).ready(function () {
     });
 
     //UPDATE PARA EL CPMS EN LA TABLA DE NOMENCLADOR
-    $("#cpms").submit(function (e) {
+    $("#cpms").submit((e) => {
         let dato = $("#codigoNomenclador").val();
-        let checkbox = [];
         let bd = $("#basedatos").val();
-        $("input:checkbox[name=codigo]:checked").each(() => {
-            checkbox.push($(this).val());
-        });
+        let checbox2 = $("input:checkbox[name=codigo]:checked").val();
 
         if (bd == "0") {
             modalAlerta(1);
@@ -412,45 +390,44 @@ $(document).ready(function () {
             modalAlerta(3);
         } else {
             $.ajax({
-                url: "cpms/update/" + dato + "/" + checkbox + "/" + bd,
+                url: "cpms/update/" + dato + "/" + checbox2 + "/" + bd,
                 type: "GET",
-                success: function (result) {
-                    if (result == 1) {
-                        $("#seccion").hide();
-                        $("#subseccion").hide();
-                        $("#table").hide();
-                        $("#seleccionar").hide();
-                        $("#aceptar").hide();
-                        $("#aceptar2").hide();
-                        $("#edit").hide();
-                        $("#cerrar").show();
-                        $("#mensaje").text("Se Actualizo CPMS");
-                        $("#modal-update").modal("show");
-                        $("#cpms").trigger("reset");
-                        $("#codigoNomenclador").empty();
-                    }
+                success: (result) => {
+                    $("#seccion").hide();
+                    $("#subseccion").hide();
+                    $("#table").hide();
+                    $("#seleccionar").hide();
+                    $("#aceptar").hide();
+                    $("#aceptar2").hide();
+                    $("#edit").hide();
+                    $("#cerrar").show();
+                    $("#mensaje").text("Se Actualizo CPMS");
+                    $("#modal-update").modal("show");
+                    $("#cpms").trigger("reset");
+                    $("#codigoNomenclador").empty();
                 },
             });
         }
         e.preventDefault();
     });
+});
 
-    function modalAlerta(codigo) {
-        let mensaje =
-            codigo === 1
-                ? "Seleccionar BD"
-                : codigo === 2
-                ? "Seleccionar procedimiento"
-                : codigo === 3
-                ? "Seleccionar solo un CPMS"
-                : "";
+const modalAlerta = (codigo) => {
+    let mensaje =
+        codigo === 1
+            ? "Seleccionar BD"
+            : codigo === 2
+            ? "Seleccionar procedimiento"
+            : codigo === 3
+            ? "Seleccionar solo un CPMS"
+            : "";
 
-        $("#seleccionar").hide();
-        $("#aceptar").hide();
-        $("#aceptar2").hide();
-        $("#edit").hide();
-        $("#cerrar").show();
-        $("#mensaje").text(mensaje);
-        $("#modal-update").modal("show");
-    }
-}); //END
+    $("#seleccionar").hide();
+    $("#aceptar").hide();
+    $("#aceptar2").hide();
+    $("#edit").hide();
+    $("#cerrar").show();
+    $("#mensaje").text(mensaje);
+    $("#modal-update").modal("show");
+};
+//END
