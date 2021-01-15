@@ -17,8 +17,8 @@ class cpmsController extends Controller
 
     public function grupo(){
         $grupo = cpms::distinct()
-             ->orderByRaw('codigo_grupo')
-             ->get(['codigo_grupo','nombre_grupo']);
+            ->orderByRaw('codigo_grupo')
+            ->get(['codigo_grupo','nombre_grupo']);
     
         return response()->json($grupo);
     }
@@ -34,18 +34,19 @@ class cpmsController extends Controller
         Config::set('database.connections.'.$gdb.'.database',$bd);
         $table=DB::table($tabla);
 
-        $json = $table->select($campo1.' AS codigo',$campo2.' AS descripcion','cpms AS cpms')
+        $json = $table->select($campo1.' AS codigo',$campo2.' AS descripcion','cpms AS cpms','tf_cpms_sec AS seccion')
                       ->distinct()
-                      ->orderByRaw($campo1.' ASC')
+                      ->orderByRaw($campo2.' ASC')
+                      ->whereNotNull('tf_cpms_sec')
                       ->get();
 
         return response()->json($json);
     }
 
-    public function seccion($codigoGrupo){
-
+    public function seccion($codigo){        
+        $codigoSeccion = explode('|',$codigo);
         $seccion=cpms::distinct()
-        ->where('codigo_seccion','LIKE',$codigoGrupo.'%')
+        ->where('codigo_seccion','LIKE',$codigoSeccion[1].'%')
         ->orderByRaw('codigo_seccion')
         ->get(['codigo_seccion','nombre_seccion']);
 
@@ -54,10 +55,11 @@ class cpmsController extends Controller
 
 
 
-    public function subseccion($codigoSeccion){
-    $subseccion=cpms::distinct()
-                ->where('codigo_subseccion','LIKE',$codigoSeccion.'%')
-                ->orderByRaw('codigo_subseccion ASC')
+    public function subseccion($codigo){
+        $codigoSeccion = explode('|',$codigo);
+        $subseccion=cpms::distinct()
+                ->whereCodigo_seccion($codigoSeccion[1])
+                ->orderByRaw('nombre_subseccion ASC')
                 ->get(['codigo_subseccion','nombre_subseccion']);
 
             return response()->json($subseccion);
@@ -79,6 +81,7 @@ class cpmsController extends Controller
     public function update($codigoProcedimiento,$codigoCmps,$bd){
 
         $database=explode('|',$bd);
+        $codigoProcedimiento = explode('|',$codigoProcedimiento);
         $gdb=config('datadb.'.$database[1].'.gdb');    
         $bd=config('datadb.'.$database[1].'.database');
         $tabla=config('datadb.'.$database[1].'.tabla');
@@ -87,7 +90,7 @@ class cpmsController extends Controller
         Config::set('database.connections.'.$gdb.'.database',$bd);
 
         $proceUpdate = DB::table($tabla)
-                        ->where($campo1,$codigoProcedimiento)
+                        ->where($campo1,$codigoProcedimiento[0])
                         ->update(['cpms' => $codigoCmps]);
 
         return 1;

@@ -1,1 +1,1 @@
-<?php return['gdb'=>'pgsql','database'=>'bd_isis2','tabla'=>'tarifario_base','campos'=>['campo0'=>'tf_codigo','campo1'=>'tf_descripcion',],];?>
+<?php return['gdb'=>'pgsql','database'=>'bd_isis','tabla'=>'tarifario_base','campos'=>['campo0'=>'tf_codigo','campo1'=>'tf_descripcion',],];?>

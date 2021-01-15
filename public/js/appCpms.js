@@ -258,20 +258,45 @@ $(document).ready(function () {
     };
     Listado();
 
-    $("#basedatos").change((e) => {
-        let grupo = $("#basedatos").val();
+    // $("#basedatos").change((e) => {
+    //     let grupo = $("#basedatos").val();
+    //     let template = "";
+    //     $.getJSON("cpms/" + grupo, (result) => {
+    //         result.map((result) => {
+    //             let cpms = result.cpms;
+    //             let color =
+    //                 cpms === null
+    //                     ? "background-color:#FFFFFF;"
+    //                     : "background-color:#009B6E;color:#fff;";
+    //             template += `<option style=${color} id="codigo" value="${result.codigo}">${result.descripcion}</option>`;
+    //         });
+    //         $("#codigoNomenclador").html(template);
+    //     });
+    //     e.preventDefault();
+    // });
+
+    const listTarifario = () => {
+        let baseDatos = "bd_isis|1";
         let template = "";
-        $.getJSON("cpms/" + grupo, (result) => {
-            result.map((result) => {
-                let cpms = result.cpms;
+        $.getJSON("cpms/" + baseDatos, (data) => {
+            data.map((data) => {
+                let cpms = data.cpms;
                 let color =
                     cpms === null
                         ? "background-color:#FFFFFF;"
-                        : "background-color:#ffe6e6;";
-                template += `<option style=${color} id="codigo" value="${result.codigo}">${result.descripcion}</option>`;
+                        : "background-color:#009B6E;color:#fff;";
+                template += `<option style=${color} id="codigo" value="${data.codigo}|${data.seccion}">${data.descripcion}</option>`;
             });
+            $("#seccion").hide();
+            $("#subseccion").hide();
             $("#codigoNomenclador").html(template);
         });
+    };
+    listTarifario();
+
+    $("#codigoNomenclador").on("click", (e) => {
+        let dato = $("#codigoNomenclador").val();
+
         e.preventDefault();
     });
 
@@ -293,7 +318,7 @@ $(document).ready(function () {
             $("#grupo").html(template);
         });
     };
-    ListadoCmpsGrupo();
+    //ListadoCmpsGrupo();
 
     //SECCION
     $("#grupo").change((e) => {
@@ -377,37 +402,39 @@ $(document).ready(function () {
     });
 
     //UPDATE PARA EL CPMS EN LA TABLA DE NOMENCLADOR
-    $("#cpms").submit((e) => {
+    $("#cpms").submit(function (e) {
         let dato = $("#codigoNomenclador").val();
-        let bd = $("#basedatos").val();
+        // let bd = $("#basedatos").val();
+        let bd = "bd_isis|1";
         let checbox2 = $("input:checkbox[name=codigo]:checked").val();
 
-        if (bd == "0") {
-            modalAlerta(1);
-        } else if (dato === null) {
-            modalAlerta(2);
-        } else if (checkbox === null) {
-            modalAlerta(3);
-        } else {
-            $.ajax({
-                url: "cpms/update/" + dato + "/" + checbox2 + "/" + bd,
-                type: "GET",
-                success: (result) => {
-                    $("#seccion").hide();
-                    $("#subseccion").hide();
-                    $("#table").hide();
-                    $("#seleccionar").hide();
-                    $("#aceptar").hide();
-                    $("#aceptar2").hide();
-                    $("#edit").hide();
-                    $("#cerrar").show();
-                    $("#mensaje").text("Se Actualizo CPMS");
-                    $("#modal-update").modal("show");
-                    $("#cpms").trigger("reset");
-                    $("#codigoNomenclador").empty();
-                },
-            });
-        }
+        // if (bd == "0") {
+        //     modalAlerta(1);
+        // } else if (dato === null) {
+        //     modalAlerta(2);
+        // } else if (checkbox === null) {
+        //     modalAlerta(3);
+        // } else {
+        $.ajax({
+            url: "cpms/update/" + dato + "/" + checbox2 + "/" + bd,
+            type: "GET",
+            success: (result) => {
+                listTarifario();
+                // $("#seccion").hide();
+                // $("#subseccion").hide();
+                // $("#table").hide();
+                // $("#seleccionar").hide();
+                // $("#aceptar").hide();
+                // $("#aceptar2").hide();
+                // $("#edit").hide();
+                // $("#cerrar").show();
+                // $("#mensaje").text("Se Actualizo CPMS");
+                // $("#modal-update").modal("show");
+                // $("#cpms").trigger("reset");
+                // $("#codigoNomenclador").empty();
+            },
+        });
+        // }
         e.preventDefault();
     });
 });

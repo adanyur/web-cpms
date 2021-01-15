@@ -1,21 +1,19 @@
 @extends('plantilla')
 @section('seccion')
-<nav class="navbar navbar-dark bg-dark">
-     <a class="navbar-brand" href="#"><span>CPMS</span></a>
+<nav class="navbar navbar-dark bg-dark mb-4">
+	<a class="navbar-brand" href="#"><span>CPMS</span></a>
 </nav>
-<br>
-
 <div class="container-fluid">
 	<form id="cpms">
-				<div class="card">
-					<div class="card-header text-center"><h4>Sistema</h4></div>
+				<!-- <div class="card">
+				<div class="card-header text-center"><h4>Sistema</h4></div>
 					<div class="card-body">
 						<div class="form-group">
 							<select class="form-control" id="basedatos"></select>
 						</div>
 					</div>
 				</div>
-		<br>
+		<br> -->
 		<div class="row">
 			<div class="col-md-5">
 				<div class="card">
@@ -24,37 +22,36 @@
 						<div class="form-group">
 							<select class="form-control" id="codigoNomenclador"size="20"></select>
 						</div>
+						<div class="form-group">
+							<!-- <span class="btn btn-danger">red</span> -->
+						</div>					
 					</div>
 				</div>
 			</div>
 			<!---->
 			<div class="col-md-7">
 				<div class="card">
-				<div class="card-header text-center"><h4>CPMS</h4></div>
+					<div class="card-header text-center"><h4>CPMS</h4></div>
 					<div class="card-body">
-						<div class="form-group">	
+						<!-- <div class="form-group">	
 							<select class="form-control" id="grupo"></select>
+						</div> -->
+						<div class="card-text text-center">
+							<h4 id="message" class="text-danger"></h4>
 						</div>
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<select class="form-control" id="seccion"></select>
-						</div>
+						</div> -->
 						<div class="form-group">
 							<select class="form-control" id="subseccion"></select>
-						</div>
-										
+						</div><br>
 						<div id="table"></div>
-
-					</div>
 				</div>
 			</div>
+		</div>
 			<div class="container p-4">
-				<div class="card">
-					<div class="card-body">
-						<button type="submit" class="CMPS btn btn-primary btn-block text-center">Acturalizar</button>
-					</div>
-				</div>
+				<button type="submit" class="CMPS btn btn-success btn-block text-center">Agregar CPMS</button>
 			</div>
-
 		</div>
 	</form>
 </div>
