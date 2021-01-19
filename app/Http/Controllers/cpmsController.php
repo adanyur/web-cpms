@@ -35,18 +35,20 @@ class cpmsController extends Controller
         $table=DB::table($tabla);
 
         $json = $table->select($campo1.' AS codigo',$campo2.' AS descripcion','cpms AS cpms','tf_cpms_sec AS seccion')
+                      ->join('pre_facturacion_det', 'tarifario_base.tf_codigo', '=', 'pre_facturacion_det.fcd_producto')
                       ->distinct()
-                      ->orderByRaw($campo2.' ASC')
-                      ->whereNotNull('tf_cpms_sec')
+                      ->whereYear('pre_facturacion_det.fcd_fechareg','>=', '2019')
+                      ->whereYear('pre_facturacion_det.fcd_fechareg','<=' ,'2021')
+                      ->orderByRaw($campo1.' ASC')                      
                       ->get();
 
         return response()->json($json);
     }
 
     public function seccion($codigo){        
-        $codigoSeccion = explode('|',$codigo);
+        
         $seccion=cpms::distinct()
-        ->where('codigo_seccion','LIKE',$codigoSeccion[1].'%')
+        ->where('codigo_grupo','=',$codigo)
         ->orderByRaw('codigo_seccion')
         ->get(['codigo_seccion','nombre_seccion']);
 
@@ -56,10 +58,13 @@ class cpmsController extends Controller
 
 
     public function subseccion($codigo){
+
         $codigoSeccion = explode('|',$codigo);
+        $id = strlen($codigo) === 3?$codigo:$codigoSeccion[1];
+             
         $subseccion=cpms::distinct()
-                ->whereCodigo_seccion($codigoSeccion[1])
-                ->orderByRaw('nombre_subseccion ASC')
+                ->whereCodigo_seccion($id)
+                ->orderByRaw('codigo_subseccion ASC')
                 ->get(['codigo_subseccion','nombre_subseccion']);
 
             return response()->json($subseccion);
@@ -77,6 +82,13 @@ class cpmsController extends Controller
     }
 
     
+    public function dataCpms($codigo){
+        $data = cpms::whereCodigo_procedimiento($codigo)->get();
+            return response()->json($data);
+    }
+
+
+
     /*METODO PARA HACER ACTUALIZACIONES EN LA TABLA NOMENCLADOR*/
     public function update($codigoProcedimiento,$codigoCmps,$bd){
 
@@ -93,7 +105,7 @@ class cpmsController extends Controller
                         ->where($campo1,$codigoProcedimiento[0])
                         ->update(['cpms' => $codigoCmps]);
 
-        return 1;
+        return response()->json(['message'=>'Se actualizo el cpms']);
 
     }    
 

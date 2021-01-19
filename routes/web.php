@@ -22,6 +22,7 @@ Route::get('cpms/{bd}','cpmsController@prueba');
 Route::get('cpms/seccion/{codigoGrupo}','cpmsController@seccion');
 Route::get('cpms/subseccion/{codigoSeccion}','cpmsController@subseccion');
 Route::get('cpms/procedimiento/{codigoProcedimiento}','cpmsController@procedimiento');
+Route::get('cpms/data/{codigo}','cpmsController@dataCpms');
 Route::get('cpms/update/{codigoProcedimiento}/{codigoCmps}/{bd}','cpmsController@update');
 /****/
 // Route::get('GestoresBD/connection','GestorDBController@connection');
