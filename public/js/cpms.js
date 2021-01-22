@@ -1,7 +1,6 @@
 $(document).ready(() => {
     $("#seccion").hide();
     $("#subseccion").hide();
-    $("#alert").hide();
     $("#message-process").hide();
 });
 
@@ -14,7 +13,8 @@ const listTarifario = () => {
             let color =
                 cpms === null
                     ? "background-color:#FFFFFF;"
-                    : "background-color:#9EEDB6;";
+                    : // : "background-color:#9EEDB6;";
+                      "background-color:#F0C882;color:#fff";
             if (data.seccion === null && data.cpms === null) {
                 color = "background-color:#FAC0C4;";
             }
@@ -69,7 +69,7 @@ const templateProcedimiento = (data, dataCpms) => {
 const listOne = (codigo, dataCpms) => {
     let template = "";
     $.getJSON("cpms/procedimiento/" + codigo, (data) => {
-        template += `<table class="table" id="tabla"> 
+        template += `<table class="table table-hover table-responsive" id="tabla"> 
                         <thead>
                         <tr>
                             <th>Codigo </th>
@@ -185,27 +185,59 @@ $("#subseccion").change((e) => {
     e.preventDefault();
 });
 
-const hideAlert = () => {
+const hideAlert = (time) => {
     setTimeout(() => {
         $("#message-process").hide(500);
-        $("#alert").hide(500);
-    }, 2000);
+    }, time);
 };
 
 $("#cpms").submit((e) => {
     let dato = $("#codigoNomenclador").val();
     let bd = "bd_isis|1";
-    let checbox2 = $("input:checkbox[name=codigo]:checked").val();
-    $.getJSON("cpms/update/" + dato + "/" + checbox2 + "/" + bd, (result) => {
-        listTarifario();
-        $("#seccion").hide();
-        $("#subseccion").hide();
-        $("#table").hide();
-        $("#message").show();
-        $("#message-process").text(result.message);
-        $("#alert").show(500);
-        $("#message-process").show(500);
-        hideAlert();
-    });
+    let checbox = $("input:checkbox[name=codigo]:checked").val();
+
+    if (dato === null) {
+        message(1);
+    } else if (checbox === undefined) {
+        message(2);
+    } else if ($("input:checkbox[name=codigo]:checked").length > 1) {
+        message(3);
+    } else {
+        $.getJSON(
+            "cpms/update/" + dato + "/" + checbox + "/" + bd,
+            (result) => {
+                listTarifario();
+                $("#seccion").hide();
+                $("#subseccion").hide();
+                $("#table").hide();
+                message(4);
+                hideAlert(1500);
+            }
+        );
+    }
     e.preventDefault();
 });
+
+const message = (codigo) => {
+    console.log(1);
+    let mensaje =
+        codigo === 1
+            ? "SELECCIONAR ITEM DE TARIFARIO"
+            : codigo === 2
+            ? "SELECIONAR PROCEDIMIENTO CPMS"
+            : codigo === 3
+            ? "SELECCIONAR SOLO UN PROCEDIMIENTO CPMS"
+            : codigo === 4
+            ? "SE ACTUALIZO CORRECTAMENTE"
+            : "";
+
+    let style = codigo === 4 ? "alert-success" : "alert-danger";
+    let template = `
+                <div class="alert  ${style} mt-4 text-center rounded-pill" role="alert">
+                    <h5>${mensaje}</h5>
+                </div>
+            `;
+    $("#message-process").show();
+    $("#message-process").html(template);
+    hideAlert(1000);
+};

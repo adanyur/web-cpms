@@ -1,12 +1,11 @@
-<div class="modal fade" id="modal-update">
+<!-- <div class="modal fade" id="modal-update">
   <div class="modal-dialog">
     <div class="modal-content">
-      <!-- Modal body -->
+      
       <div class="modal-body">
          <div id="mensaje"></div>
          <div id="pregunta"></div>
       </div>
-      <!-- Modal footer -->
       <div class="modal-footer">
         <button id="seleccionar" type="button" class="btn btn-primary">Ok</button>
         <button id="cerrar" type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
@@ -16,4 +15,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->

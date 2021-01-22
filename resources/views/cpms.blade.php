@@ -5,10 +5,6 @@
 </nav>
 <div class="container-fluid">
 
-	<div class="alert alert-success text-center" role="alert" id="alert">
-			<h5 id="message-process"></h5>
-	</div>
-
 	<form id="cpms">
 		<div class="row">
 			<div class="col-md-5">
@@ -19,11 +15,20 @@
 							<h6 id="message" class="text-danger"></h6>
 						</div>
 						<div class="form-group">
-							<select class="form-control" id="codigoNomenclador"size="20"></select>
+							<select class="form-control " id="codigoNomenclador"size="12"></select>
 						</div>
 						<div class="form-group">
+							<div class="card">
+								<div class="card-header">Leyenda</div>
+								<div class="card-body">
+									<div class="d-flex justify-content-between align-items-baseline">
+										Tiene codigo CPMS <span style="background-color:#F0C882;color:#fff;" class="p-3 rounded-pill text-center">VERDE CLARO</span>
+									</div>
+								</div>
+							</div>
 						</div>					
 					</div>
+					
 				</div>
 			</div>
 			<!---->
@@ -38,14 +43,19 @@
 							<select class="form-control" id="subseccion"></select>
 						</div>
 						<div id="table"></div>
+
+							
+						<div id="message-process"></div>
+
+						
 				</div>
 			</div>
 		</div>
-			<div class="container p-4">
-				<button type="submit" id="cpms" class="CMPS btn btn-success btn-block text-center">Agregar CPMS</button>
-			</div>
 		</div>
+			<div class="container p-4 justify-content-center">
+				<button type="submit" style="background-color:#015837;color:#fff;height:50px;" id="cpms" class="CMPS btn  btn-block text-center rounded-pill">Agregar CPMS</button>
+			</div>
 	</form>
+
 </div>
 @endsection
-@include('modal')

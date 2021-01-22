@@ -34,7 +34,7 @@ class cpmsController extends Controller
         Config::set('database.connections.'.$gdb.'.database',$bd);
         $table=DB::table($tabla);
 
-        $json = $table->select($campo1.' AS codigo',$campo2.' AS descripcion','cpms AS cpms','tf_cpms_sec AS seccion')
+        $json = $table->select($campo1.' AS codigo',$campo2.' AS descripcion','tf_cpms AS cpms','tf_cpms_sec AS seccion')
                       ->join('pre_facturacion_det', 'tarifario_base.tf_codigo', '=', 'pre_facturacion_det.fcd_producto')
                       ->distinct()
                       ->whereYear('pre_facturacion_det.fcd_fechareg','>=', '2019')
@@ -103,7 +103,7 @@ class cpmsController extends Controller
 
         $proceUpdate = DB::table($tabla)
                         ->where($campo1,$codigoProcedimiento[0])
-                        ->update(['cpms' => $codigoCmps]);
+                        ->update(['tf_cpms' => $codigoCmps]);
 
         return response()->json(['message'=>'Se actualizo el cpms']);
 
